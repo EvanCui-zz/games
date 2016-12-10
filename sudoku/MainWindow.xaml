@@ -1,0 +1,27 @@
+﻿<Window x:Class="sudoku.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:sudoku"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="550" Width="600" Loaded="Window_Loaded" MouseDown="Window_MouseDown" MouseWheel="Window_MouseWheel" MouseMove="Window_MouseMove">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="100" />
+        </Grid.ColumnDefinitions>
+        <Canvas Grid.Column="0" Width="460" Height="460" Name="canvas">
+            <Rectangle StrokeThickness="5" Stroke="Black" ClipToBounds="True"
+                   Width="{Binding ActualWidth, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Canvas}}}"
+                   Height="{Binding ActualHeight, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Canvas}}}" >
+                <Rectangle.Effect>
+                    <BlurEffect Radius="7" />
+                </Rectangle.Effect>
+            </Rectangle>
+        </Canvas>
+        <StackPanel Grid.Column="1">
+            <TextBlock Name="currentNumber" Text="current" />
+        </StackPanel>
+    </Grid>
+</Window>
