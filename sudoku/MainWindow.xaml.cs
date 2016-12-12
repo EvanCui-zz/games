@@ -26,7 +26,7 @@ namespace sudoku
         private const double OutlineThickness = 5.0;
         private const double LineThickness = 0.5;
         private const double BoxLineThickness = 1.0;
-        private readonly TimeSpan PutDuration = TimeSpan.FromSeconds(0.5); 
+        private readonly TimeSpan PutDuration = TimeSpan.FromSeconds(0.5);
 
         private SudokuData data;
         private TextBlock[,] texts;
@@ -38,10 +38,11 @@ namespace sudoku
             InitializeComponent();
         }
 
-        private void PutNumber(int n, int x, int y, bool delay = false)
+        private void PutNumber(int n, int x, int y, bool delay = false, bool isReadOnly = false)
         {
             var text = this.texts[x, y];
-            text.Text = $"{n}";
+            text.Foreground = isReadOnly ? Brushes.Violet : Brushes.Thistle;
+            text.Text = n > 0 ? $"{n}" : text.Text;
 
             var previewText = new FormattedText(text.Text, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface(text.FontFamily, text.FontStyle, text.FontWeight, text.FontStretch), text.FontSize, text.Foreground);
 
@@ -132,10 +133,10 @@ namespace sudoku
 
             var numberList = Enumerable.Range(0, MaxCount).Select(x => Enumerable.Range(0, MaxCount)
                 .Select(y => new { X = x, Y = y })).SelectMany(a => a)
-                .Select(co => new { X = co.X, Y = co.Y, N = this.data.Table[co.X, co.Y] })
+                .Select(co => new { X = co.X, Y = co.Y, N = this.data.Table[co.X, co.Y], Readonly = this.data.Readonly[co.X, co.Y] })
                 .ToList();
 
-            numberList.ForEach(cell => this.PutNumber(cell.N, cell.X, cell.Y, true));
+            numberList.ForEach(cell => this.PutNumber(cell.N, cell.X, cell.Y, true, cell.Readonly));
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -149,7 +150,7 @@ namespace sudoku
 
         private void Window_MouseWheel(object sender, MouseWheelEventArgs e)
         {
-            this.CurrentNumber = ((this.CurrentNumber - 1 + e.Delta / 100) % 9 + 9) % 9 + 1;
+            this.CurrentNumber = ((this.CurrentNumber - 1 + e.Delta / 120) % 9 + 9) % 9 + 1;
             this.currentNumber.Text = $"Current {this.CurrentNumber}";
             this.cursor.Text = $"{this.CurrentNumber}";
         }
@@ -187,10 +188,15 @@ namespace sudoku
                             case PutResult.Complete:
                                 this.PutNumber(current, x, y);
                                 // show complete;
+                                this.complete.IsEnabled = true;
+                                this.complete.Foreground = Brushes.Plum;
+                                this.complete.FontSize = 25;
                                 break;
 
                             case PutResult.Occupied:
                                 // show occupied;
+                                this.error.IsEnabled = true;
+                                this.error.Foreground = Brushes.Red;
                                 break;
 
                             case PutResult.OK:

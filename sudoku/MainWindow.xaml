@@ -22,6 +22,8 @@
         </Canvas>
         <StackPanel Grid.Column="1">
             <TextBlock Name="currentNumber" Text="current" />
+            <Label Name="error">Error</Label>
+            <Label Name="complete">Complete</Label>
         </StackPanel>
     </Grid>
 </Window>
